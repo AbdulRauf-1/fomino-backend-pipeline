@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Adyen Payment</title>
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@adyen/adyen-web@5.2.0/dist/adyen.css">
+      <style>
+         .loading-image {
+         height: 48px;
+         width: 48px;
+         }
+         .adyen-checkout__payment-method--selected{
+         border-radius: 0px !important;
+         border-right:0px;
+         border-left:0px;
+         } 
+         body{
+         width: 600px;
+         margin: auto;
+         height: 100vh;
+         display: flex;
+         flex-direction: column;
+         justify-content: center;
+         }
+      </style>
+   </head>
+   <body>
+      <div class="App">
+         <div class="flex justify-center relative mb-12">
+            <div style="height:168px" class="relative w-full">
+               <img class="object-cover w-full h-full" src="https://backend.fomino.ch/Public/image16.png" alt="Cover" />
+               <div class="absolute inset-0 bg-black opacity-10"></div>
+            </div>
+            <div class="absolute left-5 top-32">
+               <div class="rounded-lg h-24 w-24 overflow-hidden">
+                  <img class="w-full h-full object-cover rounded-lg" src="https://backend.fomino.ch/Public/fomino.png" alt="Logo" class="rounded-lg" />
+               </div>
+            </div>
+         </div>
+         <div class="px-4 w-full py-4 relative">
+            <div class="px-1 flex justify-between items-center">
+               <div>
+                  <p class="text-lg font-semibold"><span id="store"></span></p>
+                  <p class="text-gray-800 text-sm">Payment for online ordering: PEIRC with <span class="font-semibold text-black underline">Fomino.ch</span></p>
+                  <p class="text-gray-800 text-sm">Ref. <span id="orderNum"></span></p>
+               </div>
+               <div style="top:-35px" class="absolute right-5">
+                  <p id="order-amount" class="text-xl font-bold"> <span id="currencyUnit"></span> <span id="amount"></span></p>
+               </div>
+            </div>
+            <div class="mt-6 text-right w-full pr-2">
+               <!--<p class="text-xs">HOW WOULD YOU LIKE TO PAY?</p>-->
+               <p class="text-black underline text-sm">Cancel payment</p>
+            </div>
+            <!--<div id="payment-method-container" class="mt-6">-->
+            <!--  <label class="flex items-center">-->
+            <!--    <input type="checkbox" id="store-card-checkbox" class="form-checkbox" />-->
+            <!--    <span class="ml-2 text-sm">Save card for future payments</span>-->
+            <!--  </label>-->
+            <!--</div>-->
+         </div>
+      </div>
+      <div id="dropin-container" class="mt-0 px-2"></div>
+      <div id="stored-payment-container" class="py-2 mx-2 bg-white my-2 border border-t-gray-500 border-b-gray-500 border-r-0 border-l-0 hidden">
+         <div class="py-2 space-y-3" id="stored-payment-methods"></div>
+         <div class="mt-6 flex flex-col justify-center hidden" id="cvc-container">
+            <h3 class="text-lg font-semibold">Enter CVC</h3>
+            <input type="text" id="cvc-input" class="py-2 px-4 border border-gray-300 rounded w-full" placeholder="Enter CVC" />
+            <button id="pay-with-saved-card" class="mt-4 py-2 px-10 bg-black text-white rounded-lg hover:bg-white hover:text-slate-800 border border-slate-800">Pay with saved Card</button>
+         </div>
+      </div>
+      <!-- Error Modal -->
+      <div id="errorModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+         <div class="bg-white rounded-lg shadow-lg p-6 w-80 text-center">
+            <h2 class="text-xl font-semibold mb-4">Payment Error</h2>
+            <p id="errorMessage" class="text-gray-700">Sorry! Card details are invalid</p>
+            <button onclick="closeModal()" class="mt-4 py-2 px-4 bg-red-500 text-white rounded-lg">Close</button>
+         </div>
+      </div>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@adyen/adyen-web@5.2.0/dist/adyen.js"></script>
+      <script nonce="{{nonce}}">
+         function closeModal() {
+         document.getElementById("errorModal").classList.add("hidden");
+         }
+         $(document).ready(async function () {
+           // Function to get URL parameters
+           function getUrlParameter(name) {
+             name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+             var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+             var results = regex.exec(location.search);
+             return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+           };
+         
+           // Get the orderId and paymentProvider from the URL
+           const orderId = window.location.pathname.split('/')[2];
+           const paymentProvider = window.location.pathname.split('/')[3];
+         
+           console.log("Order ID:", orderId);
+           console.log("Payment Provider:", paymentProvider);
+         
+           $('#store-card-checkbox').change(function () {
+             storeCard = this.checked;
+           });
+         
+           var storeCard = false;
+           var sessionData = null;
+           var storedCard = null;
+         
+           async function getDataByPostApi(type) {
+             try {
+               const data = await $.ajax({
+                 url: "https://test.fomino.ch/adyen/paymentByDropIn",
+                 type: "POST",
+                 data: JSON.stringify({
+                   selectedPaymentMethod: type,
+                   recurringDetailReference: null,
+                   storeCard: true,
+                   orderId: orderId
+                 }),
+                 contentType: "application/json",
+                 dataType: "json"
+               });
+               console.log("Data from backend:", data);
+               $("#orderNum").text(data.orderData.orderNum)
+               $("#store").text(data.orderData.restaurant.businessName)
+               $("#amount").text(data.total)
+               $("#currencyUnit").text(data.currency)
+               sessionData = data.sessionData;
+               $('#order-amount').text(`${data.currency} ${data.orderData.total}`);
+               await initializeCheckout(sessionData, paymentProvider, data.storedPaymentMethods);
+             } catch (error) {
+               console.error("Error initializing checkout:", error);
+             }
+           }
+         
+           async function initializeCheckout(sessionData, selectedPaymentMethod, storedPaymentMethods) {
+               
+           //   console.log(JSON.stringify(storedPaymentMethods))
+             const configuration = {
+               storePaymentMethod: storeCard,
+               paymentMethodsConfiguration: {
+                 [selectedPaymentMethod]: {
+                   amount: { value: sessionData?.amount.value, currency: sessionData?.amount.currency },
+                   countryCode: "NL",
+                   showStorePaymentMethodField: true,
+                 },
+               },
+               locale: "en_US",
+               showPayButton: true,
+               clientKey: "test_R3ZDMVN4M5GTTJ4X4CHTZDF5TYXNY4VP",
+               environment: "test",
+               session: {
+                 id: sessionData.id,
+                 sessionData: sessionData.sessionData,
+               },
+               paymentMethodsResponse: {
+                 paymentMethods: [
+                   { type: selectedPaymentMethod },
+                 ],
+               },
+               onPaymentCompleted: (result, _component) => {
+                console.log("Payment Result:", result);
+                 // Redirect based on the resultCode
+                 switch (result.resultCode) {
+                   case "Authorised":
+                      window.location.href = "https://web.fomino.ch/timeline";
+                     break;
+                   case "Pending":
+                   case "Received":
+                     window.location.href = "https://web.fomino.ch/timeline";
+                     break;
+                   case "Refused":
+                     window.location.href = "https://web.fomino.ch/checkout";
+                     break;
+                   default:
+                     window.location.href = "https://web.fomino.ch/checkout";
+                 }
+               },
+               onError: (error, _component) => {
+         // Show modal instead of alert
+         document.getElementById("errorMessage").textContent = "Sorry! Card details are invalid.";
+         document.getElementById("errorModal").classList.remove("hidden");
+         console.log(error.message);
+         },
+             };
+         
+             console.log("AdyenCheckout configuration:", configuration);
+             try {
+               const checkout = await new AdyenCheckout(configuration);
+               console.log("AdyenCheckout instance created:", checkout);
+         
+               // Create drop-in
+               checkout.create('dropin').mount('#dropin-container');
+             } catch (error) {
+               console.error("Error creating AdyenCheckout instance:", error);
+             }
+         
+             if (storedPaymentMethods && storedPaymentMethods.details.length > 0) {
+               $('#stored-payment-container').removeClass('hidden');
+               storedPaymentMethods.details.forEach(function (method) {
+                 $('#stored-payment-methods').append(`
+                   <div class="flex items-center py-1 px-4 bg-white text-black cursor-pointer hover:bg-gray-400 hover:text-white"
+                     onclick="handleStoredPaymentMethod('${method.recurringDetailReference}')">
+                     <img style="box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;" src="${getCardBrandImage(method.variant)}" alt="${method.variant}" class="w-12 h-8 px-2 rounded-md mr-4 object-contain self-center" />
+                     <span class="text-xl font-semibold">${method.variant}</span>
+                     <span class="text-xl ml-2 font-semibold"> * * * * ${method.card.number}</span>
+                   </div>
+                 `);
+               });
+             }
+           }
+         
+           window.handleStoredPaymentMethod = function (storedPaymentMethodId) {
+             storedCard = storedPaymentMethodId;
+             $('#cvc-container').removeClass('hidden');
+           };
+         
+            $('#pay-with-saved-card').click(async function () {
+             var cvc = $('#cvc-input').val();
+             try {
+               const response = await $.ajax({
+                 url: "https://test.fomino.ch/adyen/paymentWithStoredCard",
+                 type: "POST",
+                 data: JSON.stringify({
+                   storedPaymentMethodId: storedCard,
+                   cvc: cvc,
+                   orderId: orderId
+                 }),
+                 contentType: "application/json",
+                 dataType: "json"
+               });
+               // console.log(response);
+              if(response.status){
+           window.location.href = "http://localhost:5173/timeline";
+           // window.location.href = "https://web.fomino.ch/timeline";
+         }
+         
+               else{
+                   alert(response.message)
+               }
+              
+             } catch (error) {
+              alert("Something went wrong")
+             }
+           });
+         
+           // Initialize with default payment method type
+           await getDataByPostApi(paymentProvider);
+         });
+         
+         function getCardBrandImage(brand) {
+           var cardBrandImages = {
+             visa: "https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png",
+             mc: "http://www.pngall.com/wp-content/uploads/2016/07/Mastercard-Download-PNG.png",
+             amex: "https://upload.wikimedia.org/wikipedia/commons/3/30/American_Express_logo.svg",
+           };
+           return cardBrandImages[brand] || '';
+         }
+      </script>
+   </body>
+</html>

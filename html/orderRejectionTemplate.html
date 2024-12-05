@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.5;
+      color: #333;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 5px;
+      border: 1px solid #eaeaea;
+    }
+    .header {
+      background-color: #DE2D36;
+      color: #FFFFFF;
+      text-align: center;
+      padding: 20px 0;
+    }
+    .header img {
+      display: block;
+      margin: 0 auto;
+      height: 80px;
+      width: 300px;
+    }
+    .order-number {
+      font-size: 24px;
+      font-weight: bold;
+      color: #ff0000;
+    }
+    .customer-name {
+      font-size: 18px;
+      color: #333;
+    }
+    .rejection-reason {
+      font-size: 14px;
+      color: #888;
+    }
+    .main-content {
+      padding: 20px;
+      text-align: center;
+    }
+    footer {
+      padding: 24px 0;
+      background-color: #F8F8F8;
+    }
+    .footer-table {
+      width: 100%;
+      table-layout: fixed;
+    }
+    .footer-left {
+      text-align: left;
+      vertical-align: top;
+    }
+    .footer-right {
+      text-align: right;
+      vertical-align: top;
+    }
+    .social-icons {
+      display: inline-block;
+    }
+    .social-icons a,
+    .social-icons a img {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      margin-left: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <img src="https://web.fomino.ch/images/logo2.gif" alt="FOMINO Logo">
+    </header>
+    
+    <div class="main-content" style="background:white">
+      <h2 style="color: #ff0000;">Hello, {{customerName}}!</h2>
+      <p>We regret to inform you that your order has been rejected.</p>
+      <div class="order-container">
+        <p>Your Order Number:</p>
+        <p class="order-number">{{orderNum}}</p>
+        <p class="rejection-reason">Reason: {{rejectionReason}}</p>
+      </div>
+      <p>We apologize for any inconvenience this may have caused. If you have any questions or need further assistance, please contact our support team.</p>
+      <p>Best regards,</p>
+      <p>The Fomino Team</p>
+    </div>
+
+    <footer>
+      <table class="footer-table">
+        <tr>
+          <td class="footer-left">
+            <p>Copyright © 2024 Fomino</p>
+          </td>
+          <td class="footer-right">
+            <div class="social-icons">
+              <a href="#"><img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LinkedIn"></a>
+              <a href="#"><img src="https://cdn-icons-png.flaticon.com/256/124/124010.png" alt="Facebook"></a>
+              <a href="#"><img src="https://img.freepik.com/free-vector/new-2023-twitter-logo-x-icon-design_1017-45418.jpg" alt="Twitter"></a>
+              <a href="#"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/2048px-Instagram_icon.png" alt="Instagram"></a>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </footer>
+  </div>
+</body>
+</html>

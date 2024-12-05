@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.5;
+      color: #333;
+    }
+    .order-container {
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 5px;
+      text-align: center;
+      border: 1px solid #eaeaea;
+    }
+    .order-number {
+      font-size: 24px;
+      font-weight: bold;
+      color: #007bff;
+    }
+    .customer-name {
+      font-size: 18px;
+      color: #333;
+    }
+    .completion-date {
+      font-size: 14px;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+  <h2 style="color: #007bff;">Hello, {{customerName}}!</h2>
+  <p>We are pleased to inform you that your order has been successfully completed.</p>
+  <div class="order-container">
+    <p>Your Order Number:</p>
+    <p class="order-number">{{orderNum}}</p>
+    <p class="completion-date">Completed On: {{completionDate}}</p>
+  </div>
+  <p>Thank you for choosing us. We hope you are satisfied with your purchase!</p>
+  <p>If you have any questions or need further assistance, please do not hesitate to contact us.</p>
+  <p>Best regards,</p>
+  <p>The Fomino Team</p>
+</body>
+</html>

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: "Chivo", sans-serif;
+            background-color: #FFFFFF;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: start;
+        }
+        .header {
+            background-color: #DE2D36;
+            color: #FFFFFF;
+            text-align: center;
+            height: 166px;
+            padding: 20px 0; /* Added padding for consistent centering */
+        }
+        .header img {
+            display: block; /* Ensures the image behaves like a block element */
+            margin: 0 auto; /* Centers the image horizontally */
+        }
+        .main {
+            padding: 32px 37px;
+        }
+        footer {
+            padding: 24px 37px;
+            background-color: #F8F8F8;
+        }
+        h2 {
+            margin-bottom: 20px;
+        }
+        h3 {
+            font-weight: 600;
+            font-size: 16px;
+        }
+        p {
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 21.42px;
+            color: rgba(0, 0, 0, 0.6);
+        }
+        p a, p span {
+            color: #E13743;
+            text-decoration: none;
+        }
+        .ls-p {
+            font-weight: 400;
+            margin-top: 32px;
+            margin-bottom: 60px;
+        }
+        .summary-p {
+            margin-top: 32px;
+        }
+        .order-summary {
+            margin-top: 8px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        thead th {
+            text-align: left;
+            font-weight: bold;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        tbody td {
+            padding: 8px 0;
+            font-size: 14px;
+            text-align: start; /* Ensure all text is aligned to the start (left) */
+        }
+        tbody td:first-child {
+            text-align: start;
+        }
+        tbody td:last-child, tfoot td:last-child {
+            text-align: end;
+        }
+        .sub-item td {
+            color: #888;
+            font-size: 12px;
+            padding: 2px 0px;
+            border: none;
+            text-align: start; /* Ensure add-on items are also aligned to the start */
+        }
+        .sub-item td {
+            padding-bottom: 10px;
+        }
+        tfoot .total td {
+            font-weight: bold;
+            font-size: 16px;
+            padding-top: 10px;
+        }
+        tfoot .total td:nth-child(1) {
+            text-align: start;
+        }
+        tbody tr:not(.sub-item) td {
+            font-weight: 600;
+            color: rgba(0, 0, 0, 0.6);
+        }
+        tbody tr.special-row, .total {
+            border-top: 1px solid #A5A5A5;
+            margin: 4px auto;
+        }
+        .footer-table {
+            width: 100%;
+            table-layout: fixed;
+        }
+        .footer-left {
+            text-align: left;
+            vertical-align: top;
+        }
+        .footer-right {
+            text-align: right;
+            vertical-align: top;
+        }
+        .social-icons {
+            display: inline-block;
+        }
+        .social-icons a,
+        .social-icons a img {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            margin-left: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <img style="height:80px;width:300px" src="https://web.fomino.ch/images/logo2.gif" alt="FOMINO Logo">
+        </header>
+        <div class="main">
+            <h2>Hello {{customerName}}!</h2>
+            <p>
+                We are pleased to inform that your order has been confirmed <span> (#{{orderNum}})</span>
+            </p>
+            <p class="summary-p">Here's a summary of your Order</p>
+            <div class="order-summary">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Items</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{orderItems}}
+                    </tbody>
+                    <tfoot>
+                        <tr class="total">
+                            <td>Total</td>
+                            <td></td>
+                            <td></td>
+                            <td>{{total}}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <p class="ls-p">We will update you as soon as your order status changes. You can track your order status anytime at <a href="">(Order Tracking Link)</a>. Thank you for choosing Fomino!</p>
+        </div>
+        <footer>
+            <table class="footer-table">
+                <tr>
+                    <td class="footer-left">
+                        <p>Copyright © 2024 Fomino</p>
+                    </td>
+                    <td class="footer-right">
+                        <div class="social-icons">
+                            <a href="#"><img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LinkedIn"></a>
+                            <a href="#"><img src="https://cdn-icons-png.flaticon.com/256/124/124010.png" alt="Facebook"></a>
+                            <a href="#"><img src="https://img.freepik.com/free-vector/new-2023-twitter-logo-x-icon-design_1017-45418.jpg" alt="Twitter"></a>
+                            <a href="#"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/2048px-Instagram_icon.png" alt="Instagram"></a>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </footer>
+    </div>
+</body>
+</html>
