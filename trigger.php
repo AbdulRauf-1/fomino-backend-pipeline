@@ -3,8 +3,8 @@
 $workingDir = '/home/fomino/testingtsh.fomino.ch';
 
 // Full path to node and npm binaries
-$nodePath = '/home/fomino/.nvm/versions/node/v18.20.4/bin/node';
-$npmPath = '/home/fomino/.nvm/versions/node/v18.20.4/bin/npm';
+$nodePath = '/home/fomino/.nvm/versions/node/v16.20.2/bin/node';
+$npmPath = '/home/fomino/.nvm/versions/node/v16.20.2/bin/npm';
 
 // Export PATH for the script to find node and npm
 $exportPath = 'export PATH=$PATH:/home/fomino/.nvm/versions/node/v16.20.2/bin';
