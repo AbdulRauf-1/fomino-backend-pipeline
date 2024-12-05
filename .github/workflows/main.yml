@@ -69,7 +69,7 @@ jobs:
 
       - name: Creating serviceAccount.js file
         run: |
-          echo "Creating serviceAccount.json..."
+          echo "Creating serviceAccount.js..."
           echo "${{ secrets.serviceAccount_CONTENT_PROD_JS }}" > serviceAccount.js
 
       - name: Creating serviceAccount.json file
