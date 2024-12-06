@@ -8,7 +8,7 @@ $npmPath = '/home/fomino/.nvm/versions/node/v16.20.2/bin/npm';
 $Paths = '/home/fomino/.nvm/versions/node/v16.20.2/bin/';
 
 // Set the PATH environment variable explicitly using putenv()
-putenv("PATH=$npmBinPath:$npmPath:$paths" . getenv('PATH')); // Prepend nodeBinPath to system PATH
+putenv("PATH=$npmBinPath:$npmPath:$Paths" . getenv('PATH')); // Prepend nodeBinPath to system PATH
 
 // Command to create the PM2 process and save it again
 $npmCommand = "npm install";
