@@ -1,4 +1,8 @@
 <?php
+// Enable error reporting for debugging
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
 // Path to your working directory
 $workingDir = '/home/fomino/testingtsh.fomino.ch'; // Adjusted to match your cPanel directory
 
@@ -19,8 +23,8 @@ $pm2SaveCommand = "$pm2Path save";
 // Command to create the PM2 process and save it again
 $pm2CreateCommand = "npm install && $pm2Path start shipping.js --name $processName && $pm2Path save";
 
-// Combine all commands
-$command = "export HOME=/home/fomino && cd $workingDir && $pm2StopDeleteCommand && $pm2SaveCommand && $pm2CreateCommand 2>&1";
+// Combine all commands and source NVM
+$command = "source /home/fomino/.nvm/nvm.sh && export HOME=/home/fomino && cd $workingDir && $pm2StopDeleteCommand && $pm2SaveCommand && $pm2CreateCommand 2>&1";
 
 // Execute the command
 $output = shell_exec($command);
