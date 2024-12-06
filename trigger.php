@@ -4,36 +4,40 @@ ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
 // Path to your working directory
-$workingDir = '/home/fomino/testingtsh.fomino.ch'; // Adjusted to match your cPanel directory
+$workingDir = '/home/fomino/testingtsh.fomino.ch'; 
 
 // Set up the correct environment variables for the shell
-$nodeBinPath = '/home/fomino/.nvm/versions/node/v16.20.2/bin'; // Path to node and npm binaries
-$pm2Path = '/bin/pm2'; // Path to pm2 binary
+$nodeBinPath = '/home/fomino/.nvm/versions/node/v16.20.2/bin'; 
 
 // Set the PATH environment variable explicitly using putenv()
-putenv("PATH=$nodeBinPath:" . getenv('PATH')); // Prepend nodeBinPath to system PATH
+putenv("PATH=$nodeBinPath:" . getenv('PATH')); 
 
-// Define the process name for clarity
-$processName = 'fomino'; // Adjust process name if necessary
+// Command to run npm install
+$command = "source /home/fomino/.nvm/nvm.sh && export HOME=/home/fomino && cd $workingDir && npm install";
 
-// Commands for PM2 management
-$pm2StopDeleteCommand = "$pm2Path stop $processName || true && $pm2Path delete $processName || true";
-$pm2SaveCommand = "$pm2Path save";
+// Set up the process environment
+$descriptorspec = [
+    0 => ["pipe", "r"],  // stdin
+    1 => ["pipe", "w"],  // stdout
+    2 => ["pipe", "w"],  // stderr
+];
 
-// Command to create the PM2 process and save it again
-$pm2CreateCommand = "npm install && $pm2Path start shipping.js --name $processName && $pm2Path save";
+$process = proc_open($command, $descriptorspec, $pipes);
 
-// Combine all commands and source NVM
-$command = "source /home/fomino/.nvm/nvm.sh && export HOME=/home/fomino && cd $workingDir && $pm2StopDeleteCommand && $pm2SaveCommand && $pm2CreateCommand 2>&1";
+// Check if process is created
+if (is_resource($process)) {
+    // Get the output from the command
+    $output = stream_get_contents($pipes[1]);
+    fclose($pipes[1]);
+    fclose($pipes[2]);
+    
+    // Close the process
+    $return_code = proc_close($process);
 
-// Execute the command
-$output = shell_exec($command);
-
-// Check if output is null
-if ($output === null) {
-    $output = "No output returned from shell command.";
+    // Output the result
+    echo "Return code: $return_code<br>";
+    echo nl2br($output);
+} else {
+    echo "Failed to start the process.<br>";
 }
-
-// Output the result
-echo nl2br($output);
 ?>
