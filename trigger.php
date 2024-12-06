@@ -25,7 +25,7 @@ $output = [];
 $returnVar = 0;
 
 // Execute the command and capture output
-exec($command, $output, $returnVar);
+shell_exec($command, $output, $returnVar);
 
 // Display the command and its output
 echo "<h3>Command:</h3>";
