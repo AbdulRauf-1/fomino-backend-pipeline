@@ -7,7 +7,7 @@ $nodeBinPath = '/home/fomino/.nvm/versions/node/v16.20.2/bin/node'; // Path to n
 $pm2BinPath = '/home/fomino/bin/pm2'; // Path to PM2 binary directory
 
 // Set the PATH environment variable explicitly using putenv()
-putenv("PATH=$nodeBinPath:$pm2BinPath:" . getenv('PATH')); // Prepend nodeBinPath to system PATH
+putenv("PATH=$nodeBinPath:" . getenv('PATH')); // Prepend nodeBinPath to system PATH
 
 // Define the process name for clarity
 $processName = 'rauf';
@@ -17,10 +17,10 @@ $pm2StopDeleteCommand = "pm2 stop $processName || true && pm2 delete $processNam
 $pm2SaveCommand = "pm2 save";
 
 // Command to create the PM2 process and save it again
-$pm2CreateCommand = "npm install && pm2 start app.js --name $processName && pm2 save";
+$pm2CreateCommand = "npm install";// && pm2 start app.js --name $processName && pm2 save";
 
 // Combine all commands
-$command = "export HOME=/home/fomino && cd $workingDir && $pm2StopDeleteCommand && $pm2SaveCommand && $pm2CreateCommand 2>&1";
+$command = "export HOME=/home/fomino && cd $workingDir && $pm2CreateCommand 2>&1";
 // Execute the command
 $output = shell_exec($command);
 
