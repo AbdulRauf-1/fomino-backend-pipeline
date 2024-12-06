@@ -1,12 +1,14 @@
 <?php
+
 // Path to your working directory
 $workingDir = '/home/fomino/testingtsh.fomino.ch';
-$logFile = '/home/fomino/testingtsh.fomino.ch/trigger_log.txt'; // Path to log file
+$logFile = '/home/fomino/trigger_log.txt'; // Path to log file
 
 // Load nvm to set the correct Node.js environment
 $nvmPath = '/home/fomino/.nvm/nvm.sh'; // The path to nvm's script
 $nodeBinPath = '/home/fomino/.nvm/versions/node/v16.20.2/bin'; // Path to node binaries directory
 $npmPath = '/home/fomino/.nvm/versions/node/v16.20.2/bin/npm'; // Path to npm binaries directory
+$pm2Path = '/home/fomino/bin/pm2'; // Path to PM2
 
 // Open log file for appending logs
 $log = fopen($logFile, 'a');
@@ -14,62 +16,50 @@ if ($log === false) {
     echo "Unable to open log file for writing.";
     exit;
 }
-
 fwrite($log, "\n\n" . date('Y-m-d H:i:s') . " - Trigger started.\n");
 
-// Set environment variables for Node.js and npm
+// Set environment variables
 putenv("NVM_DIR=/home/fomino/.nvm");
+$pathEnv = "$nodeBinPath:$pm2Path:" . getenv('PATH');
+putenv("PATH=$pathEnv");
+fwrite($log, "Set PATH: $pathEnv\n");
 
-// Ensure NVM is loaded and the correct paths are set
-$command = "source $nvmPath && nvm use 16.20.2 && export PATH=$nodeBinPath:$npmPath:" . getenv('PATH') . " && export HOME=/home/fomino && cd $workingDir && npm install 2>&1";
-
-// Set correct permissions for npm and node binaries and the working directory
-$setPermissionsCommand = "chmod +x $nodeBinPath/node $npmPath && chmod -R 775 $workingDir";
-
-// Log the permission setting command
+// Set correct permissions for binaries and the working directory
+$setPermissionsCommand = "chmod +x $nodeBinPath/node $npmPath $pm2Path && chmod -R 775 $workingDir";
 fwrite($log, "Running permission command: $setPermissionsCommand\n");
 $setPermissionsOutput = shell_exec($setPermissionsCommand);
-
-// Log the output of the permission setting command
 fwrite($log, "Permissions command output: $setPermissionsOutput\n");
 
-// Log the npm install command
-fwrite($log, "Running npm install command: $command\n");
-$output = shell_exec($command);
-
-// Log the output of npm install
-fwrite($log, "npm install output: $output\n");
+// Command to load nvm and execute npm install
+$npmInstallCommand = "source $nvmPath && nvm use 16.20.2 && cd $workingDir && npm install 2>&1";
+fwrite($log, "Running npm install command: $npmInstallCommand\n");
+$npmOutput = shell_exec($npmInstallCommand);
+fwrite($log, "npm install output: $npmOutput\n");
 
 // Check if output is null
-if ($output === null) {
-    $output = "No output returned from shell command.";
-    fwrite($log, "Error: No output returned.\n");
+if ($npmOutput === null || trim($npmOutput) === '') {
+    $npmOutput = "No output returned from npm install command.";
+    fwrite($log, "Error: $npmOutput\n");
+    echo nl2br($npmOutput);
 }
 
-// Output the result
-echo nl2br($output);
-fwrite($log, "Trigger finished.\n");
-
-fclose($log);
-
 // Optionally, start your app with pm2 after npm install (if needed)
-$pm2StartCommand = "pm2 start app.js --name rauf";
-
-// Log pm2 command
-fwrite($log, "Running pm2 start command: $pm2StartCommand\n");
-$pm2Output = shell_exec("source $nvmPath && nvm use 16.20.2 && export PATH=$nodeBinPath:$npmPath:" . getenv('PATH') . " && export HOME=/home/fomino && cd $workingDir && $pm2StartCommand 2>&1");
-
-// Log pm2 output
+$pm2StartCommand = "source $nvmPath && nvm use 16.20.2 && cd $workingDir && pm2 start app.js --name rauf 2>&1";
+fwrite($log, "Running PM2 start command: $pm2StartCommand\n");
+$pm2Output = shell_exec($pm2StartCommand);
 fwrite($log, "PM2 output: $pm2Output\n");
 
-// Output pm2 start result
-if ($pm2Output !== null) {
-    echo "<br><br>PM2 Output:<br>";
-    echo nl2br($pm2Output);
+// Output npm and PM2 result for debugging
+echo "<br><br>npm Output:<br>" . nl2br($npmOutput);
+if ($pm2Output !== null && trim($pm2Output) !== '') {
+    echo "<br><br>PM2 Output:<br>" . nl2br($pm2Output);
     fwrite($log, "PM2 process started successfully.\n");
 } else {
     echo "<br><br>Failed to start the PM2 process. Check if PM2 is installed and configured properly.";
     fwrite($log, "Error: Failed to start PM2.\n");
 }
+
+fwrite($log, date('Y-m-d H:i:s') . " - Trigger finished.\n");
+fclose($log);
 
 ?>
