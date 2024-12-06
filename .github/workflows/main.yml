@@ -95,8 +95,7 @@ jobs:
         run: |
               echo "Triggering npm install via PHP script..."
               curl -X GET "https://testingtsh.fomino.ch/trigger.php"
-        env:
-            HOME: /home/fomino
+        
 
   deploy_testing:
     needs: build
