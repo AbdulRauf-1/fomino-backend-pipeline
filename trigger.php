@@ -4,7 +4,7 @@ $workingDir = '/home/fomino/testingtsh.fomino.ch';
 
 // Load nvm to set the correct Node.js environment
 $nvmPath = '/home/fomino/.nvm/nvm.sh'; // The path to nvm's script
-$nodeBinPath = '/home/fomino/.nvm/versions/node/v16.20.2/bin'; // Path to node binaries directory
+$nodeBinPath = '/home/fomino/.nvm/versions/node/v16.20.2/bin/node'; // Path to node binaries directory
 $npmPath = '/home/fomino/.nvm/versions/node/v16.20.2/bin/npm'; // Path to npm binaries directory
 
 // Set environment variables for Node.js and npm
