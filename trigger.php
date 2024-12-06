@@ -15,62 +15,46 @@ putenv("PATH=$nodeBinPath:" . getenv('PATH'));
 // Command to run npm install
 $npmCommand = "source /home/fomino/.nvm/nvm.sh && export HOME=/home/fomino && cd $workingDir && npm install";
 
-// Command to stop and delete the existing PM2 process
-$pm2StopDeleteCommand = "pm2 stop rauf || true && pm2 delete rauf || true";
+// Command to stop, delete, and restart the PM2 process
+$pm2Command = "pm2 stop rauf || true && pm2 delete rauf || true && pm2 start app.js --name rauf && pm2 save";
 
-// Command to start the app using PM2 and save the configuration
-$pm2StartCommand = "pm2 start app.js --name rauf && pm2 save";
-
-// Set up the process environment
-$descriptorspec = [
+// Run the npm install command and capture output
+$process = proc_open($npmCommand, [
     0 => ["pipe", "r"],  // stdin
     1 => ["pipe", "w"],  // stdout
     2 => ["pipe", "w"],  // stderr
-];
+], $pipes);
 
-// First, run npm install
-$installCommand = $npmCommand;
-
-// Run the npm install command and capture output
-$process = proc_open($installCommand, $descriptorspec, $pipes);
-
-// Check if process is created
+// Check if the npm install process started successfully
 if (is_resource($process)) {
     $installOutput = stream_get_contents($pipes[1]);
     fclose($pipes[1]);
     fclose($pipes[2]);
-    $installReturnCode = proc_close($process);
+    proc_close($process);
 
-    // Check if npm install was successful
-    if ($installReturnCode === 0) {
-        echo "NPM install completed successfully.<br>";
-        echo nl2br($installOutput);
-        
-        // Now, run the PM2 commands to stop, delete, and start the app
-        $pm2Command = $pm2StopDeleteCommand . " && " . $pm2StartCommand;
-        $process = proc_open($pm2Command, $descriptorspec, $pipes);
-        
-        if (is_resource($process)) {
-            $pm2Output = stream_get_contents($pipes[1]);
-            fclose($pipes[1]);
-            fclose($pipes[2]);
-            $pm2ReturnCode = proc_close($process);
-            
-            if ($pm2ReturnCode === 0) {
-                echo "PM2 process started successfully.<br>";
-                echo nl2br($pm2Output);
-            } else {
-                echo "Failed to start PM2 process. Return code: $pm2ReturnCode<br>";
-                echo nl2br($pm2Output);
-            }
-        } else {
-            echo "Failed to start PM2 process.<br>";
-        }
+    echo "NPM install completed successfully.<br>";
+    echo nl2br($installOutput);
+
+    // Now, run the PM2 commands
+    $process = proc_open($pm2Command, [
+        0 => ["pipe", "r"],
+        1 => ["pipe", "w"],
+        2 => ["pipe", "w"],
+    ], $pipes);
+
+    // Check if the PM2 process started successfully
+    if (is_resource($process)) {
+        $pm2Output = stream_get_contents($pipes[1]);
+        fclose($pipes[1]);
+        fclose($pipes[2]);
+        proc_close($process);
+
+        echo "PM2 process started successfully.<br>";
+        echo nl2br($pm2Output);
     } else {
-        echo "NPM install failed. Return code: $installReturnCode<br>";
-        echo nl2br($installOutput);
+        echo "Failed to start PM2 process.<br>";
     }
 } else {
-    echo "Failed to start npm install process.<br>";
+    echo "Failed to run npm install.<br>";
 }
 ?>
