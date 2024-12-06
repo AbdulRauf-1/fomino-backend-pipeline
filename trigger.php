@@ -60,7 +60,7 @@ echo "<h3>Running npm install:</h3>";
 $command = "$npmPath install 2>&1";
 $output = [];
 $returnVar = 0;
-exec($command, $output, $returnVar);
+shell_exec($command, $output, $returnVar);
 
 // Display command output
 echo "<h3>Command Output:</h3>";

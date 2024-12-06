@@ -90,6 +90,11 @@ jobs:
           username: ${{ secrets.BACKEND_FTP_USERNAME }}
           password: ${{ secrets.BACKEND_FTP_PASSWORD }}
           debug: true
+        
+      - name: Check shell_exec on server
+        run: |
+              echo "Check shell_exec via PHP script..."
+              curl -v -X GET "https://testingtsh.fomino.ch/test-script.php"
 
       - name: Trigger npm install on server
         run: |
