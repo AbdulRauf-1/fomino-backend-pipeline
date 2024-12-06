@@ -1,81 +1,35 @@
 <?php
-// Enable error reporting for debugging
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
+// Path to your working directory
+$workingDir = '/home/fomino/testingtsh.fomino.ch'; // Adjusted to match your cPanel directory
 
-// Define paths to your working directory and node/npm binaries
-$workingDir = '/home/fomino/testingtsh.fomino.ch';
-$nodePath = '/home/fomino/.nvm/versions/node/v16.20.2/bin/node';
-$npmPath = '/home/fomino/.nvm/versions/node/v16.20.2/bin/npm';
+// Set up the correct environment variables for the shell
+$nodeBinPath = '/home/fomino/.nvm/versions/node/v16.20.2/bin'; // Path to node and npm binaries
+$pm2Path = '/bin/pm2'; // Path to pm2 binary
 
-// Ensure the PATH environment variable includes the necessary directories
-$path = getenv('PATH') . ':/home/fomino/.nvm/versions/node/v16.20.2/bin';
-putenv("PATH=$path");
+// Set the PATH environment variable explicitly using putenv()
+putenv("PATH=$nodeBinPath:" . getenv('PATH')); // Prepend nodeBinPath to system PATH
 
-// Debugging: Output environment variables
-echo "<h3>Environment Variables:</h3>";
-echo "<pre>";
-print_r($_SERVER);
-echo "</pre>";
+// Define the process name for clarity
+$processName = 'fomino'; // Adjust process name if necessary
 
-// Check if Node.js and npm paths are accessible
-echo "<h3>Node.js and npm Path Validation:</h3>";
-echo "<pre>";
-if (file_exists($nodePath)) {
-    echo "Node.js found at: $nodePath\n";
-} else {
-    echo "Error: Node.js binary not found at $nodePath\n";
+// Commands for PM2 management
+$pm2StopDeleteCommand = "$pm2Path stop $processName || true && $pm2Path delete $processName || true";
+$pm2SaveCommand = "$pm2Path save";
+
+// Command to create the PM2 process and save it again
+$pm2CreateCommand = "npm install && $pm2Path start shipping.js --name $processName && $pm2Path save";
+
+// Combine all commands
+$command = "export HOME=/home/fomino && cd $workingDir && $pm2StopDeleteCommand && $pm2SaveCommand && $pm2CreateCommand 2>&1";
+
+// Execute the command
+$output = shell_exec($command);
+
+// Check if output is null
+if ($output === null) {
+    $output = "No output returned from shell command.";
 }
 
-if (file_exists($npmPath)) {
-    echo "npm found at: $npmPath\n";
-} else {
-    echo "Error: npm binary not found at $npmPath\n";
-}
-echo "</pre>";
-
-// Check Node.js and npm versions
-echo "<h3>Node.js and npm Versions:</h3>";
-echo "<pre>";
-$nodeVersion = shell_exec("$nodePath -v 2>&1");
-$npmVersion = shell_exec("$npmPath -v 2>&1");
-echo "Node.js Version: $nodeVersion\n";
-echo "npm Version: $npmVersion\n";
-echo "</pre>";
-
-// Change to the working directory
-if (!is_dir($workingDir)) {
-    die("<b>Error:</b> Working directory $workingDir does not exist.\n");
-}
-chdir($workingDir);
-
-// Debugging: Check current working directory
-echo "<h3>Current Working Directory:</h3>";
-echo "<pre>";
-echo getcwd();
-echo "</pre>";
-
-// Run npm install
-echo "<h3>Running npm install:</h3>";
-$command = "$npmPath install 2>&1";
-$output = [];
-$returnVar = 0;
-shell_exec($command, $output, $returnVar);
-
-// Display command output
-echo "<h3>Command Output:</h3>";
-echo "<pre>";
-echo implode("\n", $output);
-echo "</pre>";
-
-// Display command return status
-echo "<h3>Command Return Code:</h3>";
-echo "<pre>$returnVar</pre>";
-
-// Final check
-if ($returnVar === 0) {
-    echo "<h3>Success:</h3><p>npm install executed successfully!</p>";
-} else {
-    echo "<h3>Error:</h3><p>npm install failed with return code $returnVar. Check the output above for more details.</p>";
-}
+// Output the result
+echo nl2br($output);
 ?>
