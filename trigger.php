@@ -1,25 +1,24 @@
 <?php
-// Path to your working directory
-$workingDir = '/home/fomino/testingtsh.fomino.ch';
+echo "Debugging: Before chmod <br>";
+$setBinaryPermissions = exec("chmod +x /home/fomino/.nvm/versions/node/v16.20.2/bin/node /home/fomino/.nvm/versions/node/v16.20.2/bin/npm 2>&1");
+echo "Debugging: After chmod <br>";
 
-// Full path to node and npm binaries
+// Check the permissions
+echo "Permissions: <br>" . nl2br($setBinaryPermissions) . "<br>";
+
+$workingDir = '/home/fomino/testingtsh.fomino.ch';
 $nodePath = '/home/fomino/.nvm/versions/node/v16.20.2/bin/node';
 $npmPath = '/home/fomino/.nvm/versions/node/v16.20.2/bin/npm';
 
-// Export PATH for the script to find node and npm
-$exportPath = 'export PATH=$PATH:/home/fomino/.nvm/versions/node/v16.20.2/bin';
+// Check if node and npm paths are valid
+echo "Node Path: $nodePath <br>";
+echo "NPM Path: $npmPath <br>";
 
-// Set permissions for node and npm binaries
-$setBinaryPermissions = shell_exec("chmod +x $nodePath $npmPath 2>&1");
+exec("$nodePath -v", $output, $return_var);
+echo "Node Version: <br>" . implode("\n", $output) . "<br>";
 
-// Set permissions for the working directory
-$setDirPermissions = shell_exec("chmod -R 775 $workingDir 2>&1");
-
-// Run npm install with explicit PATH export
-$output = shell_exec("$exportPath && cd $workingDir && npm install 2>&1");
-
-// Display results
-echo "Binary Permissions Output:<br />" . nl2br($setBinaryPermissions) . "<br />";
-echo "Directory Permissions Output:<br />" . nl2br($setDirPermissions) . "<br />";
-echo "NPM Install Output:<br />" . nl2br($output) . "<br />";
+// Check if npm install works
+exec("cd $workingDir && $npmPath install", $output, $return_var);
+echo "Output: <br>" . implode("\n", $output) . "<br>";
+echo "Return Code: $return_var <br>";
 ?>
