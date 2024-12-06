@@ -16,7 +16,7 @@ $setBinaryPermissions = shell_exec("chmod +x $nodePath $npmPath 2>&1");
 $setDirPermissions = shell_exec("chmod -R 775 $workingDir 2>&1");
 
 // Run npm install with explicit PATH export
-$output = shell_exec("$exportPath && cd $workingDir && $npmPath install 2>&1");
+$output = shell_exec("$exportPath && cd $workingDir && npm install 2>&1");
 
 // Display results
 echo "Binary Permissions Output:<br />" . nl2br($setBinaryPermissions) . "<br />";
