@@ -2,19 +2,17 @@
 // Path to your working directory
 $workingDir = '/home/fomino/testingtsh.fomino.ch';
 
-// Set up the correct environment variables for the shell
-$nodeBinPath = '/home/fomino/.nvm/versions/node/v16.20.2/bin/node'; // Path to node binaries
+// Load nvm to set the correct Node.js environment
+$nvmPath = '/home/fomino/.nvm/nvm.sh'; // The path to nvm's script
+
+// Set the correct environment variables for the shell
+$nodeBinPath = '/home/fomino/.nvm/versions/node/v16.20.2/bin'; // Path to node binaries directory
 $npmPath = '/home/fomino/.nvm/versions/node/v16.20.2/bin/npm';
-$Paths = '/home/fomino/.nvm/versions/node/v16.20.2/bin/';
 
-// Set the PATH environment variable explicitly using putenv()
-putenv("PATH=$npmBinPath:$npmPath:$Paths" . getenv('PATH')); // Prepend nodeBinPath to system PATH
+// Ensure NVM is loaded and the correct paths are set
+putenv("NVM_DIR=/home/fomino/.nvm");
+$command = "source $nvmPath && nvm use 16.20.2 && export PATH=$nodeBinPath:$npmPath:" . getenv('PATH') . " && export HOME=/home/fomino && cd $workingDir && npm install 2>&1";
 
-// Command to create the PM2 process and save it again
-$npmCommand = "npm install";
-
-// Combine all commands
-$command = "export HOME=/home/fomino && cd $workingDir && $npmCommand 2>&1";
 // Execute the command
 $output = shell_exec($command);
 
@@ -26,4 +24,3 @@ if ($output === null) {
 // Output the result
 echo nl2br($output);
 ?>
-
