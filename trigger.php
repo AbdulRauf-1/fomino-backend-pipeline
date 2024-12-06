@@ -19,29 +19,29 @@ echo "</pre>";
 // Change to the working directory
 chdir($workingDir);
 
-// Run the npm install command
+// Run the npm install command using system()
 $command = "npm install 2>&1"; // Using npm directly
 $output = [];
 $returnVar = 0;
 
 // Execute the command and capture output
-shell_exec($command, $output, $returnVar);
+system($command, $returnVar);
 
 // Display the command and its output
 echo "<h3>Command:</h3>";
 echo "<pre>$command</pre>";
+
+echo "<h3>Return Code:</h3>";
+echo "<pre>$returnVar</pre>";
 
 echo "<h3>Output:</h3>";
 echo "<pre>";
 echo implode("\n", $output);
 echo "</pre>";
 
-echo "<h3>Return Code:</h3>";
-echo "<pre>$returnVar</pre>";
-
 // Debugging: Check if npm is accessible
 echo "<h3>NPM Version:</h3>";
 $npmVersion = [];
-exec("npm -v", $npmVersion);
+system("npm -v", $returnVar);
 echo "<pre>" . implode("\n", $npmVersion) . "</pre>";
 ?>
