@@ -3,6 +3,7 @@ name: CI/CD Workflow
 on:
   push:
     branches:
+      - testing
       - main
       
 jobs:
@@ -30,7 +31,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
 
-    
+
     steps:
       - name: 🚚 Get latest code
         uses: actions/checkout@v2
@@ -38,7 +39,7 @@ jobs:
       - name: Evaluate DEPLOY_FLAG
         id: check-flag
         run: |
-          DEPLOY_FLAG="yes"
+          DEPLOY_FLAG="no"
           if [ "$DEPLOY_FLAG" != "yes" ]; then
             echo "Deployment flag is not set to 'yes'."
             exit 78
@@ -118,35 +119,50 @@ jobs:
       - name: Create .env file dynamically
         run: |
           echo "Creating .env file..."
-          echo "${{ secrets.ENV_FILE_CONTENT_STAGE }}" > .env
+          echo "${{ secrets.ENV_FILE_CONTENT_PROD }}" > .env
 
       - name: Create config folder and files
         run: |
           echo "Creating config folder..."
           mkdir -p config
-          echo "${{ secrets.CONFIG_JSON_CONTENT_STAGE }}" > config/config.json
+          echo "${{ secrets.CONFIG_JSON_CONTENT }}" > config/config.json
 
       - name: Create .htaccess file
         run: |
-          echo "Creating .htaccess_stage file..."
-          echo "${{ secrets.HTACCESS_CONTENT_STAGE }}" > .htaccess
+          echo "Creating .htaccess_prod file..."
+          echo "${{ secrets.HTACCESS_CONTENT_PROD }}" > .htaccess
 
-      - name: Creating firebase.json file
+      - name: Creating btwixtServiceAccount.json file
         run: |
-          echo "Creating firebase.json..."
-          echo "${{ secrets.FIREBASE_CONTENT_STAGE }}" > firebase.json
+          echo "Creating btwixtServiceAccount.json..."
+          echo "${{ secrets.btwixtServiceAccount_CONTENT_PROD }}" > btwixtServiceAccount.json
 
-      - name: 📂 Sync files to development
+      - name: Creating serviceAccount.js file
+        run: |
+          echo "Creating serviceAccount.js..."
+          echo "${{ secrets.serviceAccount_CONTENT_PROD_JS }}" > serviceAccount.js
+
+      - name: Creating serviceAccount.json file
+        run: |
+          echo "Creating serviceAccount.json..."
+          echo "${{ secrets.serviceAccount_CONTENT_PROD_JSON }}" > serviceAccount.json
+
+      - name: Creating trimServiceAcount.json file
+        run: |
+          echo "Creating trimServiceAcount.json..."
+          echo "${{ secrets.trimServiceAcount_CONTENT_PROD }}" > trimServiceAcount.json
+
+
+      - name: 📂 Sync files to production
         uses: SamKirkland/FTP-Deploy-Action@v4.2.0
         with:
           server: ftp.fomino.ch
-          username: ${{ secrets.STAGE_FTP_USERNAME }}
-          password: ${{ secrets.STAGE_FTP_PASSWORD }}
+          username: ${{ secrets.BACKEND_FTP_USERNAME }}
+          password: ${{ secrets.BACKEND_FTP_PASSWORD }}
           debug: true
-
+        
       - name: Trigger npm install on server
         run: |
-            echo "Triggering npm install and pm2 start via PHP script..."
-            curl -X GET "https://testingtsh.fomino.ch/trigger.php"
-        env:
-            HOME: /home/fomino
+              echo "Triggering npm install via PHP script..."
+              curl -v -X GET "https://testingtsh.fomino.ch/trigger.php"
+        
