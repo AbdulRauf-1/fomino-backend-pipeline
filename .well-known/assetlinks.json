@@ -1,0 +1,9 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.sigitechnologies.fominocustomer",
+    "sha256_cert_fingerprints":
+    ["2F:A2:0C:89:2D:C8:10:E7:42:AC:9E:92:84:8E:89:72:37:FD:AB:4B:D7:8E:8D:93:96:50:A7:E4:2D:A6:83:FC","B8:F5:9C:3C:F8:B3:7A:77:C8:E8:CE:99:23:72:56:8B:CB:8E:7C:50:DE:15:EF:7C:8A:14:D0:E8:A4:93:B7:EA"]
+  }
+}]
