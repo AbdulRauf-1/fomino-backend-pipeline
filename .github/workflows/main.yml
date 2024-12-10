@@ -27,7 +27,7 @@ jobs:
  
   deploy_main:
     needs: build
-    if: github.ref == 'refs/heads/main' && secrets.DEPLOY_FLAG == 'yes'
+    if: github.ref == 'refs/heads/main' && ${{secrets.DEPLOY_FLAG}} == 'yes'
     runs-on: ubuntu-latest
 
     steps:
