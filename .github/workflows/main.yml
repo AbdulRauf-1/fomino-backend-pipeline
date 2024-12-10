@@ -28,9 +28,8 @@ jobs:
  
   deploy_main:
     needs: build
-    if: ${{ github.ref == 'refs/heads/main' && secrets.DEPLOY_FLAG == 'yes' }}
     runs-on: ubuntu-latest
-    
+    if: ${{ github.ref == 'refs/heads/main' && secrets.DEPLOY_FLAG == 'yes' }}
 
 
     steps:
