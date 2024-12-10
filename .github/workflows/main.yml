@@ -37,8 +37,8 @@ jobs:
       - name: Evaluate DEPLOY_FLAG
         id: check-flag
         run: |
-          DEPLOY_FLAG="yes"
-          if [ "DEPLOY_FLAG" != "yes" ]; then
+          DEPLOY_FLAG="no"
+          if [ "$DEPLOY_FLAG" != "yes" ]; then
             echo "Deployment flag is not set to 'yes'."
             exit 78
           fi
