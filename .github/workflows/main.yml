@@ -34,6 +34,15 @@ jobs:
       - name: 🚚 Get latest code
         uses: actions/checkout@v2
 
+      - name: Evaluate DEPLOY_FLAG
+        id: check-flag
+        run: |
+          if [ "${{ secrets.DEPLOY_FLAG }}" != "yes" ]; then
+            echo "Deployment flag is not set to 'yes'."
+            exit 78
+          fi
+
+
       # - name: Check deployment flag
       #   id: check-flag
       #   run: |
