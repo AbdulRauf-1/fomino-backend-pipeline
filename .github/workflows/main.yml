@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch:
       
 jobs:
   build:
@@ -28,22 +27,22 @@ jobs:
  
   deploy_main:
     needs: build
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && secrets.DEPLOY_FLAG == 'yes'
     runs-on: ubuntu-latest
 
     steps:
       - name: 🚚 Get latest code
         uses: actions/checkout@v2
 
-      - name: Check deployment flag
-        id: check-flag
-        run: |
-          DEPLOY_FLAG="no" # Set the flag here. Change to "yes" to enable deployment.
-          echo "Deployment flag is set to: $DEPLOY_FLAG"
-          if [ "$DEPLOY_FLAG" != "yes" ]; then
-            echo "Deployment flag is not set to 'yes'. Skipping deployment."
-            exit 0
-          fi
+      # - name: Check deployment flag
+      #   id: check-flag
+      #   run: |
+      #     DEPLOY_FLAG="no" # Set the flag here. Change to "yes" to enable deployment.
+      #     echo "Deployment flag is set to: $DEPLOY_FLAG"
+      #     if [ "$DEPLOY_FLAG" != "yes" ]; then
+      #       echo "Deployment flag is not set to 'yes'. Skipping deployment."
+      #       exit 0
+      #     fi
 
       - name: Create .env file dynamically
         run: |
