@@ -6,11 +6,19 @@ error_reporting(E_ALL);
 // Path to your working directory
 $workingDir = '/home/fomino/testingtsh.fomino.ch';
 
+
 // Set up the correct environment variables for the shell
 $nodeBinPath = '/home/fomino/.nvm/versions/node/v16.20.2/bin';
 
 // Set the PATH environment variable explicitly using putenv()
 putenv("PATH=$nodeBinPath:" . getenv('PATH'));
+
+$zipPublicCommand='export HOME=/home/fomino && cd $workingDir && zip -r Public.zip Public/';
+$process = proc_open($zipPublicCommand, [
+    0 => ["pipe", "r"],  // stdin
+    1 => ["pipe", "w"],  // stdout
+    2 => ["pipe", "w"],  // stderr
+], $pipes);
 
 // Command to run npm install
 $npmCommand = "source /home/fomino/.nvm/nvm.sh && export HOME=/home/fomino && cd $workingDir && npm install";
