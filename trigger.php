@@ -17,6 +17,8 @@ $npmCommand = "source /home/fomino/.nvm/nvm.sh && export HOME=/home/fomino && cd
 
 // Command to stop, delete, and restart the PM2 process
 $pm2Command = "pm2 stop rauf || true && pm2 delete rauf || true && pm2 start app.js --name rauf && pm2 save";
+// $pm2Command = "pm2 restart rauf && pm2 save";
+
 
 // Run the npm install command and capture output
 $process = proc_open($npmCommand, [
