@@ -2,7 +2,7 @@
 // Enable error reporting for debugging
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
-
+ 
 // Path to your working directory
 $workingDir = '/home/fomino/testingtsh.fomino.ch';
 
