@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="https://web.fomino.ch/images/favicon.webp" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="Fomino"
+      content="Fomino food app created using create-react-app"
+    />
+    <title>Fomino</title>
+
+    <!-- Inter Font -->
+    <link rel="stylesheet" href="https://web.fomino.ch/fonts/inter/inter.css" />
+
+    <!-- SF Pro Font -->
+    <link rel="stylesheet" href="https://web.fomino.ch/fonts/sf/sf.css" />
+
+    <!-- Switzer Font -->
+    <link rel="stylesheet" href="https://web.fomino.ch/fonts/switzer/switzer.css" />
+
+    <!-- Nunito Font -->
+    <link rel="stylesheet" href="https://web.fomino.ch/fonts/nunito/nunito.css" />
+
+    <!-- Poppins Font -->
+    <link rel="stylesheet" href="https://web.fomino.ch/fonts/poppins/poppins.css" />
+
+    <!-- TT Norms Font -->
+    <link rel="stylesheet" href="https://web.fomino.ch/fonts/tt/tt.css" />
+    <script type="module" crossorigin src="https://web.fomino.ch/assets/index-p_hiEOVU.js"></script>
+    <link rel="stylesheet" crossorigin href="https://web.fomino.ch/assets/index-z84nfhHC.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
