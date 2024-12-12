@@ -7,31 +7,10 @@ on:
       - main
       
 jobs:
-  # build:
-  #   runs-on: ubuntu-latest
-  #   container:
-  #     image: node:16.20.2
-
-  #   steps:
-  #     - uses: actions/checkout@v2
-
-  #     - name: Cache node modules
-  #       uses: actions/cache@v2
-  #       with:
-  #         path: ~/.npm
-  #         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-  #         restore-keys: |
-  #           ${{ runner.os }}-node-
-
-  #     - name: Install dependencies
-  #       run: npm ci
  
   deploy_main:
-    # needs: build
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    
-
 
     steps:
       - name: 🚚 Get latest code
@@ -98,7 +77,6 @@ jobs:
         
 
   deploy_testing:
-    # needs: build
     if: github.ref == 'refs/heads/testing'
     runs-on: ubuntu-latest
 
