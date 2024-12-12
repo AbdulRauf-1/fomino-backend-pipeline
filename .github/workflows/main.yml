@@ -73,7 +73,7 @@ jobs:
       - name: Trigger npm install on server
         run: |
               echo "Triggering npm install via PHP script..."
-              curl -v -X GET "https://testingtsh.fomino.ch/trigger.php"
+              curl -X GET "https://testingtsh.fomino.ch/trigger.php"
         
 
   deploy_testing:
@@ -132,5 +132,5 @@ jobs:
       - name: Trigger npm install on server
         run: |
               echo "Triggering npm install via PHP script..."
-              curl -v -X GET "https://testingtsh.fomino.ch/trigger.php"
+              curl -X GET "https://testingtsh.fomino.ch/trigger.php"
         
